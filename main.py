@@ -12,26 +12,20 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import page
-from Config import *
+from config import *
 
 # main for the login page - this should show number of tests failed
 # and output those test results to the user
 class Test_Printer_Logic(unittest.TestCase):
 
-    # def test_search_python(self):
-    #     mainPage = page.MainPage(self.driver)
-    #     assert mainPage.is_title_matches()
-    #     mainPage.search_text_element = "pycon"
-    #     mainPage.click_go_button()
-    #     search_result_page = page.SearchResultPage(self.driver)
-    #     assert search_result_page.is_results_found()
-
+    # runs before every test, opens the browser
+    # and navigates to the website
     def setUp(self):
         self.driver = webdriver.Chrome(
             "C:\Program Files (x86)\chromedriver.exe")
         self.driver.get(
             "https://snowrentalstest.printercloud.com/admin/index.php")
-        
+    
     # test to ensure that the page loads properly
     def test_pl_page_loads(self):
         mainPage = page.MainPage(self.driver)
@@ -87,46 +81,68 @@ class Test_Printer_Logic(unittest.TestCase):
         mainPage = page.MainPage(self.driver)
         mainPage.click_login_button()
 
-        WebDriverWait(self.driver, 100).until(
-            lambda driver: driver.find_element_by_link_text("My Company"))
+        # WebDriverWait(self.driver, 100).until(
+        #     lambda driver: driver.find_element_by_link_text("My Company"))
+
         correct_login_result_page = page.TriggeredResults(self.driver)
         assert correct_login_result_page.correct_login_results()
 
-    # # test to ensure not logged in users cannot access acount
-    # def test_not_logged_in(self):
-    #     pass
+    # test to ensure not logged in users cannot access acount content
+    def test_not_logged_in(self):
+        mainPage = page.MainPage(self.driver)
+        mainPage.click_login_button()
+        not_logged_in_change_security_settings = page.TriggeredResults(self.driver)
+        assert not_logged_in_change_security_settings.fail_change_security()
 
-    # # test to ensure false information lost password does not work
-    # def test_false_lost_password(self):
-    #     pass
+    # test to ensure false information lost password does not work
+    def test_false_lost_password(self):
+        mainPage = page.MainPage(self.driver)
+        mainPage.click_lost_password()
 
-    # # test to ensure lost password works
-    # def test_lost_password(self):
-    #     forgot_password = driver.find_element_by_id(
-    #         "forgot-password")
-    #     pass
+        # WebDriverWait(self.driver, 100).until(
+        #     lambda driver: driver.find_element_by_id("email"))
 
-    # # test to ensure privacy policy works
-    # def test_privacy_policy(self):
-    #     privacy_policy_container = driver.find_element_by_id(
-    #         "privacy-policy-container")
-    #     pass
+        mainPage.click_email()
+        email = self.driver.find_element_by_id("email")
+        email.send_keys(FAKEEMAIL)
+        email.send_keys(Keys.RETURN)
 
-    # # test to ensure ui widget overlay works properly
-    # # by testing that it adjusts height and covers whole screen
-    # def test_ui_overlay_covers_screen(self):
-    #     pass
+        false_email_reset = page.TriggeredResults(self.driver)
+        assert false_email_reset.fail_change_security()        
 
-    # # test to ensure user cannot access search without being logged in
-    # def test_ui_false_user_cannot_search(self):
-    #     pass
+    # test to ensure privacy policy works
+    def test_privacy_policy(self):
+        mainPage = page.MainPage(self.driver)
+        mainPage.click_privacy_policy()
 
-    # # test to ensure ui dialog adjusts center when in logging in ????? IT DOESN'T
-    # def test_ui_dialog_centered(self):
-    #     pass
+        self.driver.switch_to.window(self.driver.window_handles[1])
+    
+        priv_page_loaded = page.TriggeredResults(self.driver)
+        assert priv_page_loaded.privacy_policy_loads()
 
+    # test to ensure ui widget overlay works properly
+    # by testing that it adjusts height and covers whole screen
+    # even when the screen size is changed
+    def test_ui_overlay_covers_screen(self):
+        dialog = self.driver.find_element_by_class_name("ui-widget-overlay")
+        before = dialog.size
+        self.driver.set_window_size(1920, 1080)
+        after = dialog.size
+        assert before != after
+
+    # test to ensure ui dialog adjusts center when in logging in ? IT DOESN'T
+    def test_ui_dialog_centered(self):
+        dialog = self.driver.find_element_by_class_name("ui-dialog")
+        before = dialog.location
+        self.driver.set_window_size(1920, 1080)
+        after = dialog.location
+        assert before != after
+
+    # runs after every test and closes the browser
     def tearDown(self):
-        self.driver.close()
+        self.driver.quit()
+        
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(warnings='ignore')
+    # unittest.main()

@@ -9,6 +9,8 @@ from selenium.webdriver.common.by import By
 class MainPageLocators(object):
     GO_BUTTON = (By.ID, "admin-login-btn")
     LOST_PW = (By.ID, "forgot-password")
+    EMAIL_FIELD = (By.ID, "email")
+    PRIVACY_POLICY = (By.LINK_TEXT, "Privacy Policy")
 
 class LoggedInPageLocators(object):
-    USER_MENU = (By.ID, "user-menu")
+    pass

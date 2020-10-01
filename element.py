@@ -21,10 +21,3 @@ class BasePageElement(object):
             lambda driver: driver.find_element_by_name(self.locator))   # anonymous function, returns true or false
         element = driver.find_element_by_name(self.locator)
         return element.get_attribute("value")
-
-    # def __in__(self, obj, owner):
-    #     driver = obj.driver
-    #     WebDriverWait(driver, 100).until(
-    #         lambda driver: driver.find_element_by_name(self.locator))   # anonymous function, returns true or false
-    #     element = driver.find_element_by_name(self.locator)
-    #     return element.get_attribute("value")

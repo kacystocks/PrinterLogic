@@ -6,11 +6,16 @@
 ###########################################
 from locator import *
 from element import BasePageElement
-from Config import *
+from config import *
 
 class LostPasswordTextElement(BasePageElement):
     locator = "forgot-password"
 
+class UsernamePassword(BasePageElement):
+    locator = "Please enter your username and password:"
+
+class UserMenu(BasePageElement):
+    locator = "user-menu"
 
 class BasePage(object):
 
@@ -20,7 +25,6 @@ class BasePage(object):
 
 class MainPage(BasePage):
 
-    username_text_element = LostPasswordTextElement()
 
     def is_title_matches(self):
         return "PrinterLogic" in self.driver.title
@@ -28,21 +32,22 @@ class MainPage(BasePage):
     def click_lost_password(self):
         element = self.driver.find_element(
             *MainPageLocators.LOST_PW)
-        # print("clicking " + element.text)
         element.click()
 
     def click_login_button(self):
         element = self.driver.find_element(
             *MainPageLocators.GO_BUTTON)
-        # print("clicking " + element.text)
         element.click()
 
-    def click_username(self):
+    def click_email(self):
         element = self.driver.find_element(
-            *LoggedInPageLocators.USER_MENU)
-        # print("clicking " + element.text)
+            *MainPageLocators.EMAIL_FIELD)
         element.click()
 
+    def click_privacy_policy(self):
+        element = self.driver.find_element(
+            *MainPageLocators.PRIVACY_POLICY)
+        element.click()
 
 class TriggeredResults(BasePage):
 
@@ -50,10 +55,19 @@ class TriggeredResults(BasePage):
         return "forgot-password-form" in self.driver.page_source
 
     def not_input_login_results(self):
-        return "Please enter your username and password:" in self.driver.page_source
+        return UsernamePassword.locator in self.driver.page_source
 
     def false_input_login_results(self):
         return USERNAME not in self.driver.page_source and FAKEUSERNAME not in self.driver.page_source
 
     def correct_login_results(self):
-        return USERNAME in self.driver.page_source
+        return UserMenu.locator in self.driver.page_source
+
+    def fail_change_security(self):
+        return "Security" not in self.driver.page_source
+
+    def fail_reset_false_email(self):
+        return "We can't find a user with that email address." in self.driver.page_source
+
+    def privacy_policy_loads(self):
+        return "PrinterLogic takes data privacy seriously and is committed to managing your personal data" in self.driver.page_source
