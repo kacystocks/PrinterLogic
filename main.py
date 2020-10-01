@@ -2,7 +2,7 @@
 # Automated tests written for Printer Logic
 # Login Page ##############################
 # Kacy Stocks #############################
-# 9/28-30/2020 ############################
+# 9/28-10/1/2020 ##########################
 ###########################################
 import unittest
 import time
@@ -14,17 +14,16 @@ from selenium.webdriver.support import expected_conditions as EC
 import page
 from config import *
 
-# main for the login page - this should show number of tests failed
-# and output those test results to the user
+ChromeDriver = "C:\Program Files (x86)\chromedriver.exe"
+PrinterLogicWebsite = "https://snowrentalstest.printercloud.com/admin/index.php"
+
 class Test_Printer_Logic(unittest.TestCase):
 
     # runs before every test, opens the browser
     # and navigates to the website
     def setUp(self):
-        self.driver = webdriver.Chrome(
-            "C:\Program Files (x86)\chromedriver.exe")
-        self.driver.get(
-            "https://snowrentalstest.printercloud.com/admin/index.php")
+        self.driver = webdriver.Chrome(ChromeDriver)
+        self.driver.get(PrinterLogicWebsite)
     
     # test to ensure that the page loads properly
     def test_pl_page_loads(self):
@@ -80,10 +79,6 @@ class Test_Printer_Logic(unittest.TestCase):
         password.send_keys(PASSWORD)        
         mainPage = page.MainPage(self.driver)
         mainPage.click_login_button()
-
-        # WebDriverWait(self.driver, 100).until(
-        #     lambda driver: driver.find_element_by_link_text("My Company"))
-
         correct_login_result_page = page.TriggeredResults(self.driver)
         assert correct_login_result_page.correct_login_results()
 
@@ -98,10 +93,6 @@ class Test_Printer_Logic(unittest.TestCase):
     def test_false_lost_password(self):
         mainPage = page.MainPage(self.driver)
         mainPage.click_lost_password()
-
-        # WebDriverWait(self.driver, 100).until(
-        #     lambda driver: driver.find_element_by_id("email"))
-
         mainPage.click_email()
         email = self.driver.find_element_by_id("email")
         email.send_keys(FAKEEMAIL)
@@ -138,7 +129,7 @@ class Test_Printer_Logic(unittest.TestCase):
         after = dialog.location
         assert before != after
 
-    # runs after every test and closes the browser
+    # runs after every test and quits the browser and pipe
     def tearDown(self):
         self.driver.quit()
         

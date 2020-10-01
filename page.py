@@ -2,7 +2,7 @@
 # Automated tests written for Printer Logic
 # Login Page ##############################
 # Kacy Stocks #############################
-# 9/28-30/2020 ############################
+# 9/28-10/1/2020 ##########################
 ###########################################
 from locator import *
 from element import BasePageElement
